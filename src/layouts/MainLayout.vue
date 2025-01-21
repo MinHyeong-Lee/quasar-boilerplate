@@ -26,7 +26,7 @@ export default {
     MainNav,
   },
   setup() {
-    console.log('Main')
+    console.log('MainLayout')
   },
   data() {
     return {
