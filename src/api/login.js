@@ -1,25 +1,5 @@
 import { api } from 'boot/axios'
-// import { defineStore } from 'pinia'
-
-export async function loadData() {
-  const token = ''
-  let data = await api
-    .post(
-      '/api/method/common_doc.common_doc.doctype.document_manual.document_manual.get_manual_url',
-      {
-        doctype: 'General Expense Approval',
-      },
-      {
-        headers: {
-          Authorization: token,
-        },
-      },
-    )
-    .then((response) => {
-      return response.data
-    })
-  return data
-}
+import { saveCredentials } from '@/utils/secureStorage'
 
 export async function login({ username, password }) {
   let data = await api
@@ -27,14 +7,18 @@ export async function login({ username, password }) {
       username: username,
       password: password,
     })
-    .then((response) => {
-      return response.data
+    .then(async (response) => {
+      let userData = response.data.message
+      await saveCredentials(userData.api_key, userData.api_secret)
+      delete userData.api_key
+      delete userData.api_secret
+      return userData
     })
   return data
 }
 
 export async function logout() {
-  let data = await api.post('/api/method/logut').then((response) => {
+  let data = await api.post('/api/method/logout').then((response) => {
     return response.data
   })
   return data

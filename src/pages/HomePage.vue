@@ -1,46 +1,52 @@
 <template>
   <q-page>
-    <div>
+    <div class="home-page">
       <h1>Home</h1>
-      <p v-if="isAuthenticated">Welcome, {{ userInfo?.username }}!</p>
-      <button @click="handleLogout">Logout</button>
+      <!-- 사용자 정보가 있으면 환영 메시지를 표시 -->
+      <p v-if="isAuthenticated">Welcome, {{ user?.employee_name }}!</p>
+      <!-- 사용자 정보가 없으면 로그인 요청 메시지를 표시 -->
+      <p v-else>Please log in to continue.</p>
+    </div>
+    <div class="q-pa-md q-gutter-sm">
+      <q-btn color="primary" label="Primary" @click="loadtest" />
     </div>
   </q-page>
 </template>
 
 <script>
-import { useUserStore } from 'stores/user'
-import { useRouter } from 'vue-router'
-import { Loading } from 'quasar'
+import { useUserStore } from '@/stores/user'
+import { loadData } from 'src/api/approval/approval_doctype'
 
 export default {
   setup() {
-    console.log('Home')
-    const store = useUserStore()
-    const router = useRouter()
+    const userStore = useUserStore() // Pinia의 userStore 사용
 
-    const handleLogout = () => {
-      console.log('Logout button clicked') // 디버깅 로그
-      Loading.show() // 로딩 애니메이션 시작
-
-      // 로그아웃 실행
-      store.logout()
-
-      setTimeout(() => {
-        Loading.hide() // 로딩 애니메이션 종료
-
-        // 로그인 페이지로 이동
-        router.push('/login').catch((err) => {
-          console.error('Navigation error:', err) // 라우터 이동 에러 처리
-        })
-      }, 500)
+    const loadtest = async () => {
+      let a = await loadData()
+      console.log(a)
     }
 
     return {
-      userInfo: store.userInfo, // 사용자 정보
-      isAuthenticated: store.isAuthenticated, // 인증 상태
-      handleLogout, // 로그아웃 핸들러
+      user: userStore.user, // 사용자 정보
+      isAuthenticated: userStore.isAuthenticated, // 인증 상태
+      loadtest,
     }
   },
 }
 </script>
+
+<style scoped>
+.home-page {
+  text-align: center;
+  margin-top: 50px;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 1.2em;
+}
+</style>

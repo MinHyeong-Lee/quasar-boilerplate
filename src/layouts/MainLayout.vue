@@ -1,16 +1,16 @@
 <template>
-  <q-layout>
-    <MainNav />
-    <q-page-container>
+  <q-layout view="lHh Lpr lFf">
+    <AppHeader @toggle-sidebar="toggleSidebar" />
+    <MainNav v-model="drawer" />
+    <!-- <q-page-container>
       <q-page class="bg-grey-2">
-        <!-- 상단바 -->
         <div class="header-bar">
           <q-btn flat round dense icon="arrow_back" @click="goBack" />
           <div class="header-title">General Expense Approval</div>
           <q-btn flat round dense icon="close" @click="close" />
         </div>
       </q-page>
-    </q-page-container>
+    </q-page-container> -->
 
     <q-page-container>
       <router-view />
@@ -19,10 +19,12 @@
 </template>
 
 <script>
+import AppHeader from '@/components/AppHeader.vue'
 import MainNav from '@/components/MainNav.vue'
 
 export default {
   components: {
+    AppHeader,
     MainNav,
   },
   setup() {
@@ -30,8 +32,7 @@ export default {
   },
   data() {
     return {
-      isApprovalLineOpen: false,
-      isDraftContentOpen: false,
+      drawer: false,
     }
   },
   methods: {
@@ -43,6 +44,10 @@ export default {
     },
     submitApproval() {
       console.log('결재하기 클릭')
+    },
+    toggleSidebar() {
+      this.drawer = !this.drawer
+      console.log(this.drawer)
     },
   },
 }

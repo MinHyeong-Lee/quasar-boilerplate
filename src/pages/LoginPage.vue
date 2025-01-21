@@ -12,14 +12,23 @@
 
       <!-- 로그인 폼 -->
       <div class="login-form">
-        <q-input v-model="username" label="아이디" outlined class="form-input" />
-        <q-input v-model="password" label="비밀번호" outlined type="password" class="form-input" />
-        <q-btn label="로그인" color="primary" unelevated class="login-btn" @click="handleLogin" />
+        <q-input v-model="username" label="ID" outlined class="form-input" />
+        <q-input v-model="password" label="PASSWORD" outlined type="password" class="form-input" />
+        <q-btn label="Login" color="primary" unelevated class="login-btn" @click="handleLogin" />
       </div>
-
-      <!-- 에러 메시지 -->
-      <div v-if="userStore.error" class="error-message">{{ userStore.error }}</div>
     </div>
+
+    <q-dialog v-model="showErrorDialog" persistent>
+      <q-card style="width: 700px; max-width: 80vw">
+        <q-card-section class="text-h6">Login Failed</q-card-section>
+        <q-card-section>
+          <p>{{ errorMessage }}</p>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Close" color="primary" @click="closeErrorDialog" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -35,6 +44,10 @@ export default {
     const username = ref('')
     const password = ref('')
 
+    // QDialog 관련 상태
+    const showErrorDialog = ref(false)
+    const errorMessage = ref('')
+
     const handleLogin = async () => {
       try {
         await userStore.login({ username: username.value, password: password.value })
@@ -43,8 +56,15 @@ export default {
         // 로그인 성공 시 홈으로 이동
         router.push('/')
       } catch (err) {
-        console.error('Login Error:', err)
+        console.log(err)
+        // 에러 메시지 설정 및 QDialog 표시
+        errorMessage.value = 'Login Failed'
+        showErrorDialog.value = true
       }
+    }
+
+    const closeErrorDialog = () => {
+      showErrorDialog.value = false
     }
 
     return {
@@ -52,6 +72,9 @@ export default {
       password,
       userStore,
       handleLogin,
+      showErrorDialog,
+      errorMessage,
+      closeErrorDialog,
     }
   },
 }

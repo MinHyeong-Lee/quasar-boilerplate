@@ -1,7 +1,23 @@
 import { defineBoot } from '#q-app/wrappers'
 import axios from 'axios'
+import { getCredentials } from '@/utils/secureStorage'
 
 const api = axios.create({ baseURL: 'http://localhost:3000' })
+
+api.interceptors.request.use(
+  async (config) => {
+    const credentials = await getCredentials()
+
+    if (credentials.apiKey && credentials.apiSecret) {
+      config.headers['Authorization'] = `token ${credentials.apiKey}:${credentials.apiSecret}`
+    }
+    return config
+  },
+  (error) => {
+    // 요청 중 에러 발생 시 처리
+    return Promise.reject(error)
+  },
+)
 
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
