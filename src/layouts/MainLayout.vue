@@ -1,43 +1,16 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
+  <q-layout>
+    <MainNav />
+    <q-page-container>
+      <q-page class="bg-grey-2">
+        <!-- 상단바 -->
+        <div class="header-bar">
+          <q-btn flat round dense icon="arrow_back" @click="goBack" />
+          <div class="header-title">General Expense Approval</div>
+          <q-btn flat round dense icon="close" @click="close" />
+        </div>
+      </q-page>
+    </q-page-container>
 
     <q-page-container>
       <router-view />
@@ -45,58 +18,90 @@
   </q-layout>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+<script>
+import MainNav from '@/components/MainNav.vue'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+export default {
+  components: {
+    MainNav,
   },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+  setup() {
+    console.log('Main')
   },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+  data() {
+    return {
+      isApprovalLineOpen: false,
+      isDraftContentOpen: false,
+    }
   },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+  methods: {
+    goBack() {
+      this.$router.go(-1)
+    },
+    close() {
+      this.$router.push('/')
+    },
+    submitApproval() {
+      console.log('결재하기 클릭')
+    },
   },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>
+
+<style scoped>
+/* 상단바 */
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* 문서 제목 */
+.document-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* 토글 박스 크기 조정 */
+.toggle-box .q-expansion-item__content {
+  padding: 8px;
+}
+.toggle-box .q-expansion-item__container {
+  font-size: 14px;
+}
+
+/* 하단 버튼 */
+.fixed-bottom {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+
+.single-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.align-items-center {
+  display: flex;
+  align-items: center;
+}
+</style>
